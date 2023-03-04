@@ -18,7 +18,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel
                 var vm = new FileOpenOptionViewModel.FileOpenOptionViewModel();
                 vm.BindModel(FileOpenOption.Instance);
 
-                TargetApplicationBinder.Instance.Application!.ShowFileOpenOptionView(vm);
+                TargetApplicationBinder.Instance?.Application!.ShowFileOpenOptionView(vm);
             }
         }
     }

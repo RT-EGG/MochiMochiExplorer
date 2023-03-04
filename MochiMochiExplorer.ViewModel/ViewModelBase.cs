@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Threading;
 using Utility;
 
 namespace MochiMochiExplorer.ViewModel.Wpf
@@ -12,7 +11,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf
     public interface IViewModel : INotifyPropertyChanged
     { }
 
-    public abstract class ViewModelBase<M> : IViewModel, IDisposable where M : class
+    public abstract class ViewModelBase : IViewModel, IDisposable
     {
         public ViewModelBase()
         {
@@ -32,24 +31,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf
             GC.SuppressFinalize(this);
         }
 
-        public void BindModel(M? inModel)
-        {
-            ModelSubscriptions.DisposeItems();
-            ModelSubscriptions.Clear();
-
-            _model.Value = inModel;
-            if (Model != null)
-                BindModelProperties(Model);
-        }
-
-        public IDisposable RegisterAfterModelChanged(Action<M?> onChange)
-            => _model.Subscribe(m => onChange(m));
-
         public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected M? Model => _model.Value;
-        private ReactiveProperty<M?> _model = new ReactiveProperty<M?>();
-        public bool ModelBinded => Model != null;
 
         protected FrameworkElement? View
         {
@@ -60,13 +42,20 @@ namespace MochiMochiExplorer.ViewModel.Wpf
                 return _view;
             }
         }
-        private FrameworkElement? _view;
 
-        internal virtual Dispatcher? Dispatcher => TargetApplicationBinder.Instance.Application?.UiDispatcher;
-            //_view?.Dispatcher;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (disposing)
+                {
+                    ModelSubscriptions.DisposeItems();
+                    ModelSubscriptions.Clear();
+                }
 
-        protected virtual void BindModelProperties(M inModel)
-        { }
+                _isDisposed = true;
+            }
+        }
 
         protected void AddModelSubscription(IDisposable inSubscription)
             => ModelSubscriptions.Add(inSubscription);
@@ -74,9 +63,11 @@ namespace MochiMochiExplorer.ViewModel.Wpf
             => AddModelSubscription(inProperty.ObserveOnUIDispatcher().Subscribe(_ =>
                 inPropertyNames.ForEach(name => FirePropertyChanged(name))
             ));
-
-        private List<IDisposable> ModelSubscriptions = new List<IDisposable>();
-        private bool _isDiposed;
+        protected void ClearModelSubscriptions()
+        {
+            ModelSubscriptions.DisposeItems();
+            ModelSubscriptions.Clear();
+        }
 
         protected void FirePropertyChanged(params string[] inPropertyNames)
             => inPropertyNames.ForEach(name => FirePropertyChanged(name));
@@ -85,20 +76,37 @@ namespace MochiMochiExplorer.ViewModel.Wpf
             => FirePropertyChanged(new PropertyChangedEventArgs(inPropertyName));
 
         protected void FirePropertyChanged(PropertyChangedEventArgs inArgs)
-            => TargetApplicationBinder.Instance.Application!.UiDispatcher.BeginInvoke(() => PropertyChanged?.Invoke(this, inArgs));
-
-        protected virtual void Dispose(bool disposing)
         {
-            if (!_isDiposed)
+            if (TargetApplicationBinder.Instance?.Application != null)
             {
-                if (disposing)
-                {
-                    ModelSubscriptions.DisposeItems();
-                    ModelSubscriptions.Clear();
-                }
-
-                _isDiposed = true;
+                TargetApplicationBinder.Instance.Application.UiDispatcher.BeginInvoke(() => PropertyChanged?.Invoke(this, inArgs));
             }
         }
+
+        private FrameworkElement? _view;
+        private List<IDisposable> ModelSubscriptions = new List<IDisposable>();
+        private bool _isDisposed;
+    }
+
+    public abstract class ViewModelBase<M> : ViewModelBase where M : class
+    {
+        public void BindModel(M? inModel)
+        {
+            ClearModelSubscriptions();
+
+            _model.Value = inModel;
+            if (Model != null)
+                BindModelProperties(Model);
+        }
+
+        public IDisposable RegisterAfterModelChanged(Action<M?> onChange)
+            => _model.Subscribe(m => onChange(m));        
+
+        protected M? Model => _model.Value;
+        private ReactiveProperty<M?> _model = new ReactiveProperty<M?>();
+        public bool ModelBinded => Model != null;
+
+        protected virtual void BindModelProperties(M inModel)
+        { }
     }
 }

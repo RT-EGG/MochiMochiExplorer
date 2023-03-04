@@ -53,7 +53,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf.Utility
                         return result;
                 }
 
-                await TargetApplicationBinder.Instance.Application!.UiDispatcher.InvokeAsync(() => 
+                await TargetApplicationBinder.Instance!.Application!.UiDispatcher.InvokeAsync(() => 
                     {
                         result = CreateAssociateIconBitmap(inFilepath, inSize);
                     },

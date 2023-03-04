@@ -34,7 +34,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf
             _instance = new TargetApplicationBinder(inTargetApplication);
         }
 
-        public static TargetApplicationBinder Instance => _instance!;
+        public static TargetApplicationBinder? Instance => _instance;
         private static TargetApplicationBinder? _instance = null;
 
         public T? FindViewFor<T>(IViewModel inViewModel) where T : FrameworkElement

@@ -1,5 +1,4 @@
-﻿using Reactive.Bindings;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Utility;
 using Utility.Wpf;
 using CsUtility = Utility;
 
@@ -19,7 +17,6 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
     {
         public FileInformationListViewModel()
         {
-            ToggleColumnVisibilityCommand = new ToggleColumnVisibilityCommandClass(this);
             OpenFileCommand = new OpenFileCommandClass(this);
             CellDoubleClickCommand = new OpenFileCommandClass(this);
             ListKeyDownCommand = new ListKeyDownCommandClass(this);
@@ -33,16 +30,18 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
             set => Model!.Name.Value = value;
         }
 
-        public FileInformationViewColumnType VisibleColumns
-        {
-            get => _visibleColumns.Value;
-            set => _visibleColumns.Value = value;
-        }
         public IEnumerable<FileInformationViewModel> Items => _items;
         public IList SelectedItems { get; set; } = new List<FileInformationViewModel>();
 
+        public FileInformationListColumnViewModel FileNameColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.FileName, 300.0);
+        public FileInformationListColumnViewModel ExtensionColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.Extension, 50.0);
+        public FileInformationListColumnViewModel FilepathColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.Filepath, 500.0, false);
+        public FileInformationListColumnViewModel FileSizeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.FileSize, 80.0);
+        public FileInformationListColumnViewModel CreationTimeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.CreationTime, 120.0);
+        public FileInformationListColumnViewModel LastUpdateTimeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.LastUpdateTime, 120.0);
+        public FileInformationListColumnViewModel LastAccessTimeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.LastAccessTime, 120.0);
+
         // command
-        public ICommand ToggleColumnVisibilityCommand { get; }
         public ICommand OpenFileCommand { get; }
         public ICommand CellDoubleClickCommand { get; }
         public ICommand ListKeyDownCommand { get; }
@@ -102,19 +101,11 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
                     }
             ));
             RegisterPropertyNotification(inModel.Name, nameof(Name));
-            RegisterPropertyNotification(_visibleColumns, nameof(VisibleColumns));
         }
 
         private IEnumerable<T> GetSelectedItems<T>()
             => SelectedItems.OfType<T>();
 
-        private ReactiveProperty<FileInformationViewColumnType> _visibleColumns = new ReactiveProperty<FileInformationViewColumnType>(
-                FileInformationViewColumnType.FileName |
-                FileInformationViewColumnType.Extension |
-                FileInformationViewColumnType.FileSize |
-                FileInformationViewColumnType.LastUpdateTime |
-                FileInformationViewColumnType.LastAccessTime
-            );
         private CsUtility.ReactiveCollection<FileInformationViewModel> _items = new CsUtility.ReactiveCollection<FileInformationViewModel>();
     }
 }

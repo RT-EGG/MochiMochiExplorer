@@ -14,7 +14,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel
                 foreach (var filepath in Directory.EnumerateFiles(FileInformationListDirectoryPath, "*.json"))
                 {
                     var newList = new FileInformationListViewModel();
-                    newList.BindModel(Model.FileInformationList.Value);
+                    newList.BindModel(Model!.FileInformationList.Value);
 
                     await newList.LoadFile(filepath);
 

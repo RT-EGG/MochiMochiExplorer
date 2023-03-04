@@ -8,15 +8,15 @@
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:Interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
-             xmlns:Converter="clr-namespace:MochiMochiExplorer.Converter" xmlns:behavior="clr-namespace:Utility.Wpf.Behavior;assembly=Utility.Wpf"
-             d:DesignHeight="450" d:DesignWidth="800"
-             DataContextChanged="UserControl_DataContextChanged">
+             xmlns:Converter="clr-namespace:MochiMochiExplorer.Converter" xmlns:behavior="clr-namespace:Utility.Wpf.Behavior;assembly=Utility.Wpf" xmlns:wpf="clr-namespace:Utility.Wpf;assembly=Utility.Wpf"
+             d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <ViewModel:FileInformationListViewModel/>
     </UserControl.DataContext>
     <UserControl.Resources>
         <Converter:FileInformationViewColumnTypeToVisibilityConverter x:Key="ColumnVisibilityConverter"/>
         <Converter:FileInformationViewColumnTypeToBoolConverter x:Key="ColumnVisibleConverter"/>
+        <wpf:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
     <DataGrid
         x:Name="DataGrid"
@@ -50,13 +50,13 @@
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
-            <DataGridTextColumn x:Name="DataGridColumn_FileName" Binding="{Binding FileName}" IsReadOnly="True"/>
-            <DataGridTextColumn x:Name="DataGridColumn_Extension" Binding="{Binding Extension}" IsReadOnly="True" />
-            <DataGridTextColumn x:Name="DataGridColumn_Filepath" Binding="{Binding Filepath}" IsReadOnly="True" />
-            <DataGridTextColumn x:Name="DataGridColumn_FileSize" Binding="{Binding FileSize}" IsReadOnly="True" />
-            <DataGridTextColumn x:Name="DataGridColumn_CreationTime" Binding="{Binding CreationTime}" IsReadOnly="True" />
-            <DataGridTextColumn x:Name="DataGridColumn_LastUpdateTime" Binding="{Binding LastUpdateTime}" IsReadOnly="True" />
-            <DataGridTextColumn x:Name="DataGridColumn_LastAccessTime" Binding="{Binding LastAccessTime}" IsReadOnly="True" />
+            <local:FileInformationDataTextColumn x:Name="DataGridColumn_FileName" Binding="{Binding FileName}" ViewModel="{Binding Data.FileNameColumnViewModel, Source={StaticResource Proxy}}" />
+            <local:FileInformationDataTextColumn x:Name="DataGridColumn_Extension" Binding="{Binding Extension}" ViewModel="{Binding Data.ExtensionColumnViewModel, Source={StaticResource Proxy}}" />
+            <local:FileInformationDataTextColumn x:Name="DataGridColumn_Filepath" Binding="{Binding Filepath}" ViewModel="{Binding Data.FilepathColumnViewModel, Source={StaticResource Proxy}}" />
+            <local:FileInformationDataTextColumn x:Name="DataGridColumn_FileSize" Binding="{Binding FileSize}" ViewModel="{Binding Data.FileSizeColumnViewModel, Source={StaticResource Proxy}}" />
+            <local:FileInformationDataTextColumn x:Name="DataGridColumn_CreationTime" Binding="{Binding CreationTime}" ViewModel="{Binding Data.CreationTimeColumnViewModel, Source={StaticResource Proxy}}" />
+            <local:FileInformationDataTextColumn x:Name="DataGridColumn_LastUpdateTime" Binding="{Binding LastUpdateTime}" ViewModel="{Binding Data.LastUpdateTimeColumnViewModel, Source={StaticResource Proxy}}" />
+            <local:FileInformationDataTextColumn x:Name="DataGridColumn_LastAccessTime" Binding="{Binding LastAccessTime}" ViewModel="{Binding Data.LastAccessTimeColumnViewModel, Source={StaticResource Proxy}}" />
         </DataGrid.Columns>
         <DataGrid.CellStyle>
             <Style TargetType="DataGridCell">
@@ -64,19 +64,19 @@
             </Style>
         </DataGrid.CellStyle>
         <DataGrid.ContextMenu>
-            <ContextMenu>
+            <ContextMenu x:Name="ListContextMenu">
                 <!-- カラムヘッダーの表示切り替え -->
-                <MenuItem x:Name="MenuItemVisibility_FileName" Tag="{x:Static ViewModel:FileInformationViewColumnType.FileName}"/>
-                <MenuItem x:Name="MenuItemVisibility_Extension" Tag="{x:Static ViewModel:FileInformationViewColumnType.Extension}"/>
-                <MenuItem x:Name="MenuItemVisibility_Filepath" Tag="{x:Static ViewModel:FileInformationViewColumnType.Filepath}"/>
-                <MenuItem x:Name="MenuItemVisibility_FileSize" Tag="{x:Static ViewModel:FileInformationViewColumnType.FileSize}"/>
-                <MenuItem x:Name="MenuItemVisibility_CreationTime" Tag="{x:Static ViewModel:FileInformationViewColumnType.CreationTime}"/>
-                <MenuItem x:Name="MenuItemVisibility_LastUpdateTime" Tag="{x:Static ViewModel:FileInformationViewColumnType.LastUpdateTime}"/>
-                <MenuItem x:Name="MenuItemVisibility_LastAccessTime" Tag="{x:Static ViewModel:FileInformationViewColumnType.LastAccessTime}"/>
+                <local:FileInformationListColumnVisibilityMenuItem Column="{Binding Data.FileNameColumnViewModel, Source={StaticResource Proxy}}" />
+                <local:FileInformationListColumnVisibilityMenuItem Column="{Binding Data.ExtensionColumnViewModel, Source={StaticResource Proxy}}" />
+                <local:FileInformationListColumnVisibilityMenuItem Column="{Binding Data.FilepathColumnViewModel, Source={StaticResource Proxy}}" />
+                <local:FileInformationListColumnVisibilityMenuItem Column="{Binding Data.FileSizeColumnViewModel, Source={StaticResource Proxy}}" />
+                <local:FileInformationListColumnVisibilityMenuItem Column="{Binding Data.CreationTimeColumnViewModel, Source={StaticResource Proxy}}" />
+                <local:FileInformationListColumnVisibilityMenuItem Column="{Binding Data.LastUpdateTimeColumnViewModel, Source={StaticResource Proxy}}" />
+                <local:FileInformationListColumnVisibilityMenuItem Column="{Binding Data.LastAccessTimeColumnViewModel, Source={StaticResource Proxy}}" />
                 <!--  -->
-                <MenuItem x:Name="MenuItem_OpenFile" Header="ファイルを開く" Command="{Binding OpenFileCommand}" CommandParameter="{Binding PlacementTarget.SelectedItems,
-                   RelativeSource={RelativeSource FindAncestor,
-                   AncestorType={x:Type ContextMenu}}}"/>
+                <MenuItem x:Name="MenuItem_OpenFile" Header="ファイルを開く" Command="{Binding OpenFileCommand}" 
+                          CommandParameter="{Binding PlacementTarget.SelectedItems, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"
+                />
             </ContextMenu>
         </DataGrid.ContextMenu>
     </DataGrid>

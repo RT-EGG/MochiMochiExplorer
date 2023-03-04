@@ -35,35 +35,6 @@ namespace MochiMochiExplorer.View
 
             Loaded += (_, _) => TargetApplication.Instance.AddFrameworkElement(this);
             Unloaded += (_, _) => TargetApplication.Instance.RemoveFrameworkElement(this);
-
-            var SetupHeaders = (DataGridColumn inColumn, MenuItem inMenuItem) =>
-            {
-                if (!(inMenuItem.Tag is FileInformationViewColumnType tag))
-                    return;
-
-                var text = tag.ToDisplayText();
-                inColumn.Header = text;
-                inMenuItem.Header = text;
-            };
-
-            SetupHeaders(DataGridColumn_FileName, MenuItemVisibility_FileName);
-            SetupHeaders(DataGridColumn_Extension, MenuItemVisibility_Extension);
-            SetupHeaders(DataGridColumn_Filepath, MenuItemVisibility_Filepath);
-            SetupHeaders(DataGridColumn_FileSize, MenuItemVisibility_FileSize);
-            SetupHeaders(DataGridColumn_CreationTime, MenuItemVisibility_CreationTime);
-            SetupHeaders(DataGridColumn_LastUpdateTime, MenuItemVisibility_LastUpdateTime);
-            SetupHeaders(DataGridColumn_LastAccessTime, MenuItemVisibility_LastAccessTime);
-
-            MenuItemsVisibility = new MenuItem[]
-            {
-                MenuItemVisibility_FileName,
-                MenuItemVisibility_Extension,
-                MenuItemVisibility_Filepath,
-                MenuItemVisibility_FileSize,
-                MenuItemVisibility_CreationTime,
-                MenuItemVisibility_LastUpdateTime,
-                MenuItemVisibility_LastAccessTime,
-            };
         }
 
         private void ContextMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -71,49 +42,18 @@ namespace MochiMochiExplorer.View
             var subComponent = FindVisualParentAsDataGridSubComponent((e.OriginalSource as DependencyObject)!);
             if (subComponent is DataGridColumnHeader)
             {
-                MenuItemsVisibility.ForEach(item => item.Visibility = Visibility.Visible);
+                ListContextMenu.Items.OfType<MenuItem>().ForEach(item =>
+                {
+                    item.Visibility = (item is FileInformationListColumnVisibilityMenuItem) ? Visibility.Visible : Visibility.Collapsed;
+                });
             }
             else
             {
-                MenuItemsVisibility.ForEach(item => item.Visibility = Visibility.Collapsed);
-            }
-            
-        }
-
-        private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (!(e.NewValue is FileInformationListViewModel newContext))
-                throw new InvalidOperationException();
-
-            if (DataGridColumn_FileName is null)
-                return;
-
-            var visibilityConverter = new FileInformationViewColumnTypeToVisibilityConverter();
-            var checkedConverter = new FileInformationViewColumnTypeToBoolConverter();
-            var SetupDataGridColumnAndMenuItem = (DataGridColumn inColumn, MenuItem inMenuItem) =>
-            {
-                if (!(inMenuItem.Tag is FileInformationViewColumnType type))
-                    return;
-
-                var binding = new Binding("VisibleColumns") { Source = newContext, Converter = visibilityConverter, ConverterParameter = type };
-                BindingOperations.SetBinding(inColumn, DataGridColumn.VisibilityProperty, binding);
-
-                binding = new Binding("VisibleColumns") { Source = newContext, Converter = checkedConverter, ConverterParameter = type };
-                BindingOperations.SetBinding(inMenuItem, MenuItem.IsCheckedProperty, binding);
-
-                binding = new Binding("ToggleColumnVisibilityCommand") { Source = newContext };
-                BindingOperations.SetBinding(inMenuItem, MenuItem.CommandProperty, binding);
-
-                inMenuItem.CommandParameter = type;
-            };
-
-            SetupDataGridColumnAndMenuItem(DataGridColumn_FileName, MenuItemVisibility_FileName);
-            SetupDataGridColumnAndMenuItem(DataGridColumn_Extension, MenuItemVisibility_Extension);
-            SetupDataGridColumnAndMenuItem(DataGridColumn_Filepath, MenuItemVisibility_Filepath);
-            SetupDataGridColumnAndMenuItem(DataGridColumn_FileSize, MenuItemVisibility_FileSize);
-            SetupDataGridColumnAndMenuItem(DataGridColumn_CreationTime, MenuItemVisibility_CreationTime);
-            SetupDataGridColumnAndMenuItem(DataGridColumn_LastUpdateTime, MenuItemVisibility_LastUpdateTime);
-            SetupDataGridColumnAndMenuItem(DataGridColumn_LastAccessTime, MenuItemVisibility_LastAccessTime);
+                ListContextMenu.Items.OfType<MenuItem>().ForEach(item =>
+                {
+                    item.Visibility = (item is FileInformationListColumnVisibilityMenuItem) ? Visibility.Collapsed : Visibility.Visible;
+                });
+            }            
         }
 
         private void DataGridCell_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -148,7 +88,5 @@ namespace MochiMochiExplorer.View
 
             return inSource;
         }
-
-        private MenuItem[] MenuItemsVisibility { get; } = new MenuItem[0];
     }
 }
