@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="MochiMochiExplorer.View.FileInformationListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MochiMochiExplorer.View"
+             xmlns:ViewModel="clr-namespace:MochiMochiExplorer.ViewModel.Wpf.FileInformation;assembly=MochiMochiExplorer.ViewModel.Wpf"
+             mc:Ignorable="d" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:Interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+             xmlns:Converter="clr-namespace:MochiMochiExplorer.Converter" xmlns:behavior="clr-namespace:Utility.Wpf.Behavior;assembly=Utility.Wpf"
+             d:DesignHeight="450" d:DesignWidth="800"
+             DataContextChanged="UserControl_DataContextChanged">
+    <UserControl.DataContext>
+        <ViewModel:FileInformationListViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <Converter:FileInformationViewColumnTypeToVisibilityConverter x:Key="ColumnVisibilityConverter"/>
+        <Converter:FileInformationViewColumnTypeToBoolConverter x:Key="ColumnVisibleConverter"/>
+    </UserControl.Resources>
+    <DataGrid
+        x:Name="DataGrid"
+        Grid.Row="0" Grid.Column="0"
+        ItemsSource="{Binding Items}"
+        AutoGenerateColumns="False"
+        CanUserReorderColumns="True"
+        CanUserResizeRows="False"
+        CanUserAddRows="False"
+        CanUserDeleteRows="False"
+        EnableRowVirtualization="True"
+        ContextMenuOpening="ContextMenu_ContextMenuOpening" Margin="0,1,0,-1"
+    >
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="PreviewKeyDown">
+                <Interactivity:EventToReactiveCommand Command="{Binding ListKeyDownCommand}"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
+        <i:Interaction.Behaviors>
+            <behavior:DataGridSelectedItemsBehavior SelectedItems="{Binding SelectedItems}"/>
+        </i:Interaction.Behaviors>
+        <DataGrid.ItemTemplate>
+            <DataTemplate>
+            </DataTemplate>
+        </DataGrid.ItemTemplate>
+        <DataGrid.Columns>
+            <DataGridTemplateColumn Header="" Width="16" CanUserReorder="False" CanUserResize="False">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding Icon}" Height="16" Stretch="UniformToFill"/>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTextColumn x:Name="DataGridColumn_FileName" Binding="{Binding FileName}" IsReadOnly="True"/>
+            <DataGridTextColumn x:Name="DataGridColumn_Extension" Binding="{Binding Extension}" IsReadOnly="True" />
+            <DataGridTextColumn x:Name="DataGridColumn_Filepath" Binding="{Binding Filepath}" IsReadOnly="True" />
+            <DataGridTextColumn x:Name="DataGridColumn_FileSize" Binding="{Binding FileSize}" IsReadOnly="True" />
+            <DataGridTextColumn x:Name="DataGridColumn_CreationTime" Binding="{Binding CreationTime}" IsReadOnly="True" />
+            <DataGridTextColumn x:Name="DataGridColumn_LastUpdateTime" Binding="{Binding LastUpdateTime}" IsReadOnly="True" />
+            <DataGridTextColumn x:Name="DataGridColumn_LastAccessTime" Binding="{Binding LastAccessTime}" IsReadOnly="True" />
+        </DataGrid.Columns>
+        <DataGrid.CellStyle>
+            <Style TargetType="DataGridCell">
+                <EventSetter Event="MouseDoubleClick" Handler="DataGridCell_MouseDoubleClick" />
+            </Style>
+        </DataGrid.CellStyle>
+        <DataGrid.ContextMenu>
+            <ContextMenu>
+                <!-- カラムヘッダーの表示切り替え -->
+                <MenuItem x:Name="MenuItemVisibility_FileName" Tag="{x:Static ViewModel:FileInformationViewColumnType.FileName}"/>
+                <MenuItem x:Name="MenuItemVisibility_Extension" Tag="{x:Static ViewModel:FileInformationViewColumnType.Extension}"/>
+                <MenuItem x:Name="MenuItemVisibility_Filepath" Tag="{x:Static ViewModel:FileInformationViewColumnType.Filepath}"/>
+                <MenuItem x:Name="MenuItemVisibility_FileSize" Tag="{x:Static ViewModel:FileInformationViewColumnType.FileSize}"/>
+                <MenuItem x:Name="MenuItemVisibility_CreationTime" Tag="{x:Static ViewModel:FileInformationViewColumnType.CreationTime}"/>
+                <MenuItem x:Name="MenuItemVisibility_LastUpdateTime" Tag="{x:Static ViewModel:FileInformationViewColumnType.LastUpdateTime}"/>
+                <MenuItem x:Name="MenuItemVisibility_LastAccessTime" Tag="{x:Static ViewModel:FileInformationViewColumnType.LastAccessTime}"/>
+                <!--  -->
+                <MenuItem x:Name="MenuItem_OpenFile" Header="ファイルを開く" Command="{Binding OpenFileCommand}" CommandParameter="{Binding PlacementTarget.SelectedItems,
+                   RelativeSource={RelativeSource FindAncestor,
+                   AncestorType={x:Type ContextMenu}}}"/>
+            </ContextMenu>
+        </DataGrid.ContextMenu>
+    </DataGrid>
+</UserControl>
