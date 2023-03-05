@@ -12,7 +12,6 @@ namespace MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel
         public ApplicationViewModel()
         {
             FileDropCommand = new FileDropCommandClass(this);
-            ContentRenderedCommand = new OnLoadCommandClass(this);
             ShowFileOpenOptionsCommand = new ShowFileOpenOptionsCommandClass(this);
             ShowDataDirectoryInExplorerCommand = new ShowDataDirectoryInExplorerCommandClass(this);
             WindowClosedCommand = new WindowClosedCommandClass(this);
@@ -32,7 +31,6 @@ namespace MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel
 
         // commands
         public ICommand FileDropCommand { get; }
-        public ICommand ContentRenderedCommand { get; set; }
         public ICommand ShowFileOpenOptionsCommand { get; }
         public ICommand ShowDataDirectoryInExplorerCommand { get; }
         public ICommand WindowClosedCommand { get; }

@@ -4,13 +4,6 @@ namespace MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel
 {
     public partial class ApplicationViewModel
     {
-        public void SaveProject()
-        {
-            FileInformationList.SaveFile(
-                Path.Join(FileInformationListDirectoryPath, $"{FileInformationList.Name}.json")
-            );
-        }
-
         class WindowClosedCommandClass : CommandBase<ApplicationViewModel>
         {
             public WindowClosedCommandClass(ApplicationViewModel inViewModel) : base(inViewModel)

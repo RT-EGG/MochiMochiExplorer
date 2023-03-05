@@ -19,7 +19,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel
                 var info = new ProcessStartInfo()
                 {
                     UseShellExecute = true,
-                    FileName = Application.ApplicationDataDirectoryPath
+                    FileName = ApplicationDataDirectoryPath
                 };
 
                 Process.Start(info);

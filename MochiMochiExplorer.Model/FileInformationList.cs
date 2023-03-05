@@ -1,7 +1,4 @@
-﻿using MochiMochiExplorer.Model.Json;
-using Newtonsoft.Json;
-using Reactive.Bindings;
-using System.Reactive.Concurrency;
+﻿using Reactive.Bindings;
 
 namespace MochiMochiExplorer.Model
 {

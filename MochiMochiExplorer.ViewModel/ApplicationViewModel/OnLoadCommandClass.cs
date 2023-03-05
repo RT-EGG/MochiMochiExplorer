@@ -9,6 +9,8 @@ namespace MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel
     {
         private async Task OnLoad()
         {
+            LoadProject();
+
             if (Directory.Exists(FileInformationListDirectoryPath))
             {
                 foreach (var filepath in Directory.EnumerateFiles(FileInformationListDirectoryPath, "*.json"))
@@ -24,30 +26,6 @@ namespace MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel
                     break;
                 }
             }
-
-            ContentRenderedCommand = new NullCommandClass<ApplicationViewModel>(this);
-            FirePropertyChanged(nameof(ContentRenderedCommand));
-        }
-
-        public static string ApplicationDataDirectoryPath
-            => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RT-EGG", "MochiMochiExplorer");
-        private static string FileInformationListDirectoryPath
-            => Path.Join(ApplicationDataDirectoryPath, "FileInformations");
-
-        class OnLoadCommandClass : AsyncCommandBase<ApplicationViewModel>
-        {
-            public OnLoadCommandClass(ApplicationViewModel inViewModel) : base(inViewModel)
-            { }
-
-            public override bool CanExecute(object? parameter)
-                => true;
-
-            protected override async Task ExecuteAsync(object? parameter)
-            {
-
-            }
-                //=> await ViewModel.OnLoad();
-                
         }
     }
 }

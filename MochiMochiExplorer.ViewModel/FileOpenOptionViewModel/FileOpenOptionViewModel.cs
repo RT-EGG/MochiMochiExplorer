@@ -1,12 +1,16 @@
 ﻿using MochiMochiExplorer.Model;
+using MochiMochiExplorer.ViewModel.Wpf.Json;
+using MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Utility;
 using Utility.Wpf;
+using Newtonsoft.Json;
 
 namespace MochiMochiExplorer.ViewModel.Wpf.FileOpenOptionViewModel
 {
@@ -38,7 +42,15 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileOpenOptionViewModel
             );
 
         public void Save()
-            => Model?.SaveFile();
+        {
+            var json = new JsonFileOpenOption(FileOpenOption.Instance);
+            using (var writer = new StreamWriter(new FileStream(ApplicationViewModel.ApplicationViewModel.FileOpenOptionFilepath, FileMode.Create, FileAccess.Write)))
+            {
+                writer.Write(
+                    JsonConvert.SerializeObject(json, Formatting.Indented)
+                );
+            }
+        }
 
         protected override void BindModelProperties(FileOpenOption inModel)
         {

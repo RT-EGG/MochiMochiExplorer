@@ -1,4 +1,4 @@
-﻿using MochiMochiExplorer.ViewModel.Wpf.FileInformation.Json;
+﻿using MochiMochiExplorer.ViewModel.Wpf.Json;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

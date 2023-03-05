@@ -22,9 +22,6 @@
         <interaction:EventTrigger EventName="Drop">
             <interaction:InvokeCommandAction Command="{Binding FileDropCommand}" PassEventArgsToCommand="True"/>
         </interaction:EventTrigger>
-        <interaction:EventTrigger EventName="ContentRendered">
-            <interactivity:EventToReactiveCommand Command="{Binding ContentRenderedCommand}" />
-        </interaction:EventTrigger>
         <interaction:EventTrigger EventName="Closed">
             <interactivity:EventToReactiveCommand Command="{Binding WindowClosedCommand}" />
         </interaction:EventTrigger>

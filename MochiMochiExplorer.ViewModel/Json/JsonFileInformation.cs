@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using MochiMochiExplorer.ViewModel.Wpf.FileInformation;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation.Json
+namespace MochiMochiExplorer.ViewModel.Wpf.Json
 {
     internal class JsonFileInformation
     {
