@@ -8,14 +8,12 @@
              mc:Ignorable="d" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:Interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
-             xmlns:Converter="clr-namespace:MochiMochiExplorer.Converter" xmlns:behavior="clr-namespace:Utility.Wpf.Behavior;assembly=Utility.Wpf" xmlns:wpf="clr-namespace:Utility.Wpf;assembly=Utility.Wpf"
+             xmlns:behavior="clr-namespace:Utility.Wpf.Behavior;assembly=Utility.Wpf" xmlns:wpf="clr-namespace:Utility.Wpf;assembly=Utility.Wpf"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <ViewModel:FileInformationListViewModel/>
     </UserControl.DataContext>
     <UserControl.Resources>
-        <Converter:FileInformationViewColumnTypeToVisibilityConverter x:Key="ColumnVisibilityConverter"/>
-        <Converter:FileInformationViewColumnTypeToBoolConverter x:Key="ColumnVisibleConverter"/>
         <wpf:BindingProxy x:Key="Proxy" Data="{Binding}"/>
     </UserControl.Resources>
     <DataGrid
