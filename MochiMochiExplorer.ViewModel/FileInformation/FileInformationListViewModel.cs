@@ -40,6 +40,19 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
         public FileInformationListColumnViewModel CreationTimeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.CreationTime, 120.0);
         public FileInformationListColumnViewModel LastUpdateTimeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.LastUpdateTime, 120.0);
         public FileInformationListColumnViewModel LastAccessTimeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.LastAccessTime, 120.0);
+        public IEnumerable<FileInformationListColumnViewModel> ColumnViewModels
+        {
+            get
+            {
+                yield return FileNameColumnViewModel;
+                yield return ExtensionColumnViewModel;
+                yield return FilepathColumnViewModel;
+                yield return FileSizeColumnViewModel;
+                yield return CreationTimeColumnViewModel;
+                yield return LastUpdateTimeColumnViewModel;
+                yield return LastAccessTimeColumnViewModel;
+            }
+        }
 
         // command
         public ICommand OpenFileCommand { get; }

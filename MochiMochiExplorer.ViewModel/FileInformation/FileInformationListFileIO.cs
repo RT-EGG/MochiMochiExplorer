@@ -1,9 +1,11 @@
 ﻿using MochiMochiExplorer.ViewModel.Wpf.FileInformation.Json;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Utility;
 
 namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
 {
@@ -38,11 +40,18 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
 
         private async Task Import(JsonFileInformationList inSource)
         {
+            ColumnViewModels.ForEach(column =>
+            {
+                if (inSource.Viewer.Columns.TryGetValue(column.ColumnType, out var source))
+                {
+                    column.Import(source);
+                }
+            });
+
             if (Model is null)
                 throw new NullReferenceException();
 
             Model.Name.Value = inSource.Name;
-
             Model.Clear();
             await AddItems(inSource.Items.Select(item =>
             {
@@ -61,6 +70,14 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
             return new JsonFileInformationList
             {
                 Name = Model.Name.Value,
+                Viewer = new JsonFileInformationViewer
+                {
+                    Columns = new Dictionary<FileInformationViewColumnType, JsonFileInformationListViewColumn>(
+                        ColumnViewModels.Select(column => new KeyValuePair<FileInformationViewColumnType, JsonFileInformationListViewColumn>(
+                            column.ColumnType, column.Export()
+                        ))
+                    ),
+                },
                 Items = Model.Select(item => new JsonFileInformation
                 {
                     Filepath = item.Filepath,

@@ -56,6 +56,21 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
             }
         }
 
+        internal void Import(Json.JsonFileInformationListViewColumn inJson)
+        {
+            Width = inJson.Width;
+            Visibility = inJson.Visible ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        internal Json.JsonFileInformationListViewColumn Export()
+        {
+            return new Json.JsonFileInformationListViewColumn
+            {
+                Width = Width.Value,
+                Visible = IsVisible
+            };
+        }
+
         class ToggleVisibilityCommandClass : CommandBase<FileInformationListColumnViewModel>
         {
             public ToggleVisibilityCommandClass(FileInformationListColumnViewModel inViewModel)

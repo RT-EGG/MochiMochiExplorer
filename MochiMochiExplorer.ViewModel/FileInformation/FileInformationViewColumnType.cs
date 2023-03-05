@@ -1,17 +1,26 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Utility;
 
 namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
 {
     public enum FileInformationViewColumnType
     {
+        [EnumMember(Value = "none")]
         None = 0,
+        [EnumMember(Value = "filename")]
         FileName,
+        [EnumMember(Value = "extension")]
         Extension,
+        [EnumMember(Value = "filepath")]
         Filepath,
+        [EnumMember(Value = "filesize")]
         FileSize,
+        [EnumMember(Value = "creation_time")]
         CreationTime,
+        [EnumMember(Value = "last_update_time")]
         LastUpdateTime,
+        [EnumMember(Value = "last_access_time")]
         LastAccessTime,
     }
 
