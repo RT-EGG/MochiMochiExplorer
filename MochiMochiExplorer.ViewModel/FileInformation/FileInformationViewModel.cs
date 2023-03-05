@@ -2,11 +2,9 @@
 using Reactive.Bindings;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reactive.Concurrency;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
 {

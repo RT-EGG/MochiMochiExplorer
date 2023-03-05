@@ -6,13 +6,13 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
     public enum FileInformationViewColumnType
     {
         None = 0,
-        FileName = 1 << 0,
-        Extension = 1 << 1,
-        Filepath = 1 << 2,
-        FileSize = 1 << 3,
-        CreationTime = 1 << 4,
-        LastUpdateTime = 1 << 5,
-        LastAccessTime = 1 << 6,
+        FileName,
+        Extension,
+        Filepath,
+        FileSize,
+        CreationTime,
+        LastUpdateTime,
+        LastAccessTime,
     }
 
     public static class FileInformationViewColumnTypeExtensions
