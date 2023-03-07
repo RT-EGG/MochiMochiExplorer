@@ -111,10 +111,6 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
                     }
                 });
 
-                await dispatcher.InvokeAsync(() =>
-                {
-                    ApplySort();
-                });
                 await Task.Delay(100);
             }
         }
@@ -132,6 +128,19 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
                         DisposeOnRemove = true,
                         OnAfterSynced = args =>
                         {
+                            if (!_reservedApplyAndFilter)
+                            {
+                                _reservedApplyAndFilter = true;
+                                BackgroundTaskQueue.Instance.AddTask(new BackgroundTask()
+                                {
+                                    Async = false,
+                                    Method = () =>
+                                    {
+                                        ApplySort();
+                                        _reservedApplyAndFilter = false;
+                                    }
+                                });
+                            }
                         }
                     }
             ));
@@ -144,5 +153,6 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
         private CsUtility.ReactiveCollection<FileInformationViewModel> _items = new CsUtility.ReactiveCollection<FileInformationViewModel>();
         private CollectionViewSource _collectionView;
         private SortDescription? _sortDescription;
+        bool _reservedApplyAndFilter = false;
     }
 }
