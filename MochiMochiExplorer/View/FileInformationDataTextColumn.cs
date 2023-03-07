@@ -43,6 +43,12 @@ namespace MochiMochiExplorer.View
                 Mode = BindingMode.TwoWay,
                 UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
             });
+            BindingOperations.SetBinding(this, SortDirectionProperty, new Binding("Sorting")
+            {
+                Source = vm,
+                Mode = BindingMode.OneWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            });
 
             IsReadOnly = true;
         }

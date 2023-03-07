@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
@@ -17,9 +18,25 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
     {
         public FileInformationListViewModel()
         {
+            FileNameColumnViewModel = new FileInformationListColumnViewModel(this, FileInformationViewColumnType.FileName, 300.0);
+            ExtensionColumnViewModel = new FileInformationListColumnViewModel(this, FileInformationViewColumnType.Extension, 50.0);
+            FilepathColumnViewModel = new FileInformationListColumnViewModel(this, FileInformationViewColumnType.Filepath, 500.0, false);
+            FileSizeColumnViewModel = new FileInformationListColumnViewModel(this, FileInformationViewColumnType.FileSize, 80.0);
+            CreationTimeColumnViewModel = new FileInformationListColumnViewModel(this, FileInformationViewColumnType.CreationTime, 120.0);
+            LastUpdateTimeColumnViewModel = new FileInformationListColumnViewModel(this, FileInformationViewColumnType.LastUpdateTime, 120.0);
+            LastAccessTimeColumnViewModel = new FileInformationListColumnViewModel(this, FileInformationViewColumnType.LastAccessTime, 120.0);
+
+            _collectionView = new CollectionViewSource()
+            {
+                IsLiveSortingRequested = true,
+            };
+            _collectionView.Source = _items;
+            ChangeSort("FileName", ListSortDirection.Ascending);
+
             OpenFileCommand = new OpenFileCommandClass(this);
             CellDoubleClickCommand = new OpenFileCommandClass(this);
             ListKeyDownCommand = new ListKeyDownCommandClass(this);
+            SortingCommand = new SortingCommandClass(this);
 
             BindingOperations.EnableCollectionSynchronization(_items, new object());
         }
@@ -30,16 +47,16 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
             set => Model!.Name.Value = value;
         }
 
-        public IEnumerable<FileInformationViewModel> Items => _items;
+        public ICollectionView CollectionView { get => _collectionView.View; }
         public IList SelectedItems { get; set; } = new List<FileInformationViewModel>();
 
-        public FileInformationListColumnViewModel FileNameColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.FileName, 300.0);
-        public FileInformationListColumnViewModel ExtensionColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.Extension, 50.0);
-        public FileInformationListColumnViewModel FilepathColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.Filepath, 500.0, false);
-        public FileInformationListColumnViewModel FileSizeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.FileSize, 80.0);
-        public FileInformationListColumnViewModel CreationTimeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.CreationTime, 120.0);
-        public FileInformationListColumnViewModel LastUpdateTimeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.LastUpdateTime, 120.0);
-        public FileInformationListColumnViewModel LastAccessTimeColumnViewModel { get; } = new FileInformationListColumnViewModel(FileInformationViewColumnType.LastAccessTime, 120.0);
+        public FileInformationListColumnViewModel FileNameColumnViewModel { get; }
+        public FileInformationListColumnViewModel ExtensionColumnViewModel { get; }
+        public FileInformationListColumnViewModel FilepathColumnViewModel { get; }
+        public FileInformationListColumnViewModel FileSizeColumnViewModel { get; }
+        public FileInformationListColumnViewModel CreationTimeColumnViewModel { get; }
+        public FileInformationListColumnViewModel LastUpdateTimeColumnViewModel { get; }
+        public FileInformationListColumnViewModel LastAccessTimeColumnViewModel { get; }
         public IEnumerable<FileInformationListColumnViewModel> ColumnViewModels
         {
             get
@@ -58,6 +75,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
         public ICommand OpenFileCommand { get; }
         public ICommand CellDoubleClickCommand { get; }
         public ICommand ListKeyDownCommand { get; }
+        public ICommand SortingCommand { get; }
 
         public async Task AddFiles(IEnumerable<string> inFilepathes)
         {
@@ -93,6 +111,10 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
                     }
                 });
 
+                await dispatcher.InvokeAsync(() =>
+                {
+                    ApplySort();
+                });
                 await Task.Delay(100);
             }
         }
@@ -120,5 +142,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
             => SelectedItems.OfType<T>();
 
         private CsUtility.ReactiveCollection<FileInformationViewModel> _items = new CsUtility.ReactiveCollection<FileInformationViewModel>();
+        private CollectionViewSource _collectionView;
+        private SortDescription? _sortDescription;
     }
 }

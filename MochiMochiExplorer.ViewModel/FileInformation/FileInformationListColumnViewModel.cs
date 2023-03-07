@@ -1,4 +1,6 @@
-﻿using Reactive.Bindings;
+﻿using MochiMochiExplorer.ViewModel.Wpf.Json;
+using Reactive.Bindings;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -7,14 +9,20 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
 {
     public class FileInformationListColumnViewModel : ViewModelBase
     {
-        public FileInformationListColumnViewModel(FileInformationViewColumnType inType, double inWidth=100.0, bool inIsVisible=true)
+        public FileInformationListColumnViewModel(FileInformationListViewModel inParent, FileInformationViewColumnType inType, double inWidth=100.0, bool inIsVisible=true)
         {
+            Parent = inParent;
             ColumnType = inType;
             _width = new ReactiveProperty<DataGridLength>(inWidth);
             _visibility = new ReactiveProperty<Visibility>(inIsVisible ? Visibility.Visible : Visibility.Hidden);
+            _sorting = new ReactiveProperty<ListSortDirection?>();
+
+            Parent.SortChanged += (sender, args)
+                => _sorting.Value = (args.Column == ColumnType) && (args.Direction is not null) ? args.Direction : null;
 
             RegisterPropertyNotification(_width, nameof(Width));
             RegisterPropertyNotification(_visibility, nameof(Visibility), nameof(IsVisible));
+            RegisterPropertyNotification(_sorting, nameof(Sorting));
 
             ToggleVisibilityCommand = new ToggleVisibilityCommandClass(this);
         }
@@ -37,10 +45,14 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
             set => _visibility.Value = value;
         }
 
+        public ListSortDirection? Sorting => _sorting.Value;
+
         public bool IsVisible => Visibility == Visibility.Visible;
 
+        private readonly FileInformationListViewModel Parent;
         private readonly ReactiveProperty<DataGridLength> _width;
         private readonly ReactiveProperty<Visibility> _visibility;
+        private readonly ReactiveProperty<ListSortDirection?> _sorting;
 
         private void ToggleVisibility()
         {
@@ -56,18 +68,18 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
             }
         }
 
-        internal void Import(Json.JsonFileInformationListViewColumn inJson)
+        internal void Import(JsonFileInformationListViewColumn inJson)
         {
             Width = inJson.Width;
             Visibility = inJson.Visible ? Visibility.Visible : Visibility.Hidden;
         }
 
-        internal Json.JsonFileInformationListViewColumn Export()
+        internal JsonFileInformationListViewColumn Export()
         {
-            return new Json.JsonFileInformationListViewColumn
+            return new JsonFileInformationListViewColumn
             {
                 Width = Width.Value,
-                Visible = IsVisible
+                Visible = IsVisible,
             };
         }
 

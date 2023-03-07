@@ -18,10 +18,10 @@ namespace MochiMochiExplorer.ViewModel.Wpf.ApplicationViewModel
                     var newList = new FileInformationListViewModel();
                     newList.BindModel(Model!.FileInformationList.Value);
 
-                    await newList.LoadFile(filepath);
-
                     FileInformationList = newList;
                     FirePropertyChanged(nameof(FileInformationList));
+
+                    await newList.LoadFile(filepath);
 
                     break;
                 }

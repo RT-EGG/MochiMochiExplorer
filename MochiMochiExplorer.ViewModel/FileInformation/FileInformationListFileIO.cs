@@ -60,6 +60,12 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
 
                 return result;
             }));
+
+            if (inSource.Viewer.Sorting is not null)
+            {
+                var sorting = inSource.Viewer.Sorting;
+                ChangeSort(sorting.Column, sorting.Direction.ToListSortDirection());
+            }
         }
 
         private JsonFileInformationList Export()
@@ -77,6 +83,11 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
                             column.ColumnType, column.Export()
                         ))
                     ),
+                    Sorting = _sortDescription is null ? null : new JsonFileInformationViewSorting
+                    {
+                        Column = _sortDescription.Value.PropertyName,
+                        Direction = _sortDescription.Value.Direction.ToColumnSortDirection(),
+                    }
                 },
                 Items = Model.Select(item => new JsonFileInformation
                 {

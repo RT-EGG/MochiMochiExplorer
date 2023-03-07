@@ -19,18 +19,23 @@
     <DataGrid
         x:Name="DataGrid"
         Grid.Row="0" Grid.Column="0"
-        ItemsSource="{Binding Items}"
-        AutoGenerateColumns="False"
+        ItemsSource="{Binding CollectionView}"
+        AutoGenerateColumns="False"        
         CanUserReorderColumns="True"
         CanUserResizeRows="False"
         CanUserAddRows="False"
         CanUserDeleteRows="False"
+        CanUserSortColumns="True"
         EnableRowVirtualization="True"
-        ContextMenuOpening="ContextMenu_ContextMenuOpening" Margin="0,1,0,-1"
+        ContextMenuOpening="ContextMenu_ContextMenuOpening" 
+        Margin="0,1,0,-1"
     >
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="PreviewKeyDown">
                 <Interactivity:EventToReactiveCommand Command="{Binding ListKeyDownCommand}"/>
+            </i:EventTrigger>
+            <i:EventTrigger EventName="Sorting">
+                <Interactivity:EventToReactiveCommand Command="{Binding SortingCommand}"/>
             </i:EventTrigger>
         </i:Interaction.Triggers>
         <i:Interaction.Behaviors>
