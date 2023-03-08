@@ -29,6 +29,8 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
         // このアプリを使って最後にアクセスした日時
         public string LastAccessTime => DateToString(Model!.LastAccessTime.Value);
 
+        public long FileSizeValue => _fileSize.Value;
+
         public void OpenFile()
         {
             FileOpener.Instance.OpenFile(Filepath);
@@ -43,15 +45,15 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
 
         public void UpdateFileInfo()
         {
+            var info = new FileInfo(Model!.Filepath);
+            _fileSize.Value = info.Length;
+            _creationTime.Value = info.CreationTime;
+            _lastUpdateTime.Value = info.LastWriteTime;
+
             BackgroundTaskQueue.Instance.AddTask(new BackgroundTask
             {
                 Method = async () =>
                 {
-                    var info = new FileInfo(Model!.Filepath);
-                    _fileSize.Value = info.Length;
-                    _creationTime.Value = info.CreationTime;
-                    _lastUpdateTime.Value = info.LastWriteTime;
-
                     _icon.Value = await FileIcons.Instance.GetAssociatedIcon(Model!.Filepath, FileIcons.IconSize.Small);
                 },
                 Async = true,

@@ -153,6 +153,7 @@ namespace MochiMochiExplorer.ViewModel.Wpf.FileInformation
         private CsUtility.ReactiveCollection<FileInformationViewModel> _items = new CsUtility.ReactiveCollection<FileInformationViewModel>();
         private CollectionViewSource _collectionView;
         private SortDescription? _sortDescription;
+        private IComparer? _customSortComparer = null;
         bool _reservedApplyAndFilter = false;
     }
 }
